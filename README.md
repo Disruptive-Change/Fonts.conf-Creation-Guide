@@ -15,59 +15,133 @@ A universal font configuration setup for **all Linux distributions**. This scrip
 - **[Ubuntu Nerd Font](https://github.com/ryanoasis/nerd-fonts/releases/tag/v2.1.0)**: The Ubuntu font with added support for various icons and symbols.
 - **[JetBrains Nerd Font](https://github.com/ryanoasis/nerd-fonts/releases/tag/v2.1.0)**: A clean and modern font tailored for developers, with extensive icon support.
 
-## **Installation**
+## **Installation** ##
 
-### **1. Clone the repository:**
+#!/bin/bash
 
-```bash
-git clone https://github.com/Disruptive-Change/universal-font-config.git
-cd universal-font-config
+# Set the fontconfig directory to user's local config or system-wide config
+FONTCONFIG_DIR="${HOME}/.config/fontconfig/conf.d"
 
-2. Make the script executable:
+# Check if we're running with root privileges for system-wide installation
+if [ "$(id -u)" -eq 0 ]; then
+    FONTCONFIG_DIR="/etc/fonts/conf.d"
+fi
 
-chmod +x setup-fonts.sh
+# Create the directory if it doesn't exist
+mkdir -p "$FONTCONFIG_DIR"
 
-3. Run the script:
+# Define font configuration content for each font
+INTER_FONT_CONFIG='<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+<fontconfig>
+    <match target="pattern">
+        <test qual="any" name="family">
+            <string>Inter</string>
+        </test>
+        <edit name="family" mode="assign">
+            <string>Inter</string>
+        </edit>
+        <edit name="weight" mode="assign">
+            <double>400</double>
+        </edit>
+        <edit name="slant" mode="assign">
+            <double>0</double>
+        </edit>
+        <edit name="width" mode="assign">
+            <double>100</double>
+        </edit>
+        <edit name="hinting" mode="assign">
+            <bool>true</bool> <!-- Corrected from string to bool -->
+        </edit>
+        <edit name="antialias" mode="assign">
+            <bool>true</bool>
+        </edit>
+    </match>
+</fontconfig>
+'
 
-For user-level configuration (local only):
+UBUNTU_NERD_FONT_CONFIG='<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+<fontconfig>
+    <match target="pattern">
+        <test qual="any" name="family">
+            <string>Ubuntu Nerd Font</string>
+        </test>
+        <edit name="family" mode="assign">
+            <string>Ubuntu Nerd Font</string>
+        </edit>
+        <edit name="weight" mode="assign">
+            <double>400</double>
+        </edit>
+        <edit name="slant" mode="assign">
+            <double>0</double>
+        </edit>
+        <edit name="width" mode="assign">
+            <double>100</double>
+        </edit>
+        <edit name="hinting" mode="assign">
+            <bool>true</bool> <!-- Corrected from string to bool -->
+        </edit>
+        <edit name="antialias" mode="assign">
+            <bool>true</bool>
+        </edit>
+    </match>
+</fontconfig>
+'
 
-./setup-fonts.sh
+JETBRAINS_NERD_FONT_CONFIG='<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+<fontconfig>
+    <match target="pattern">
+        <test qual="any" name="family">
+            <string>JetBrains Mono Nerd Font</string>
+        </test>
+        <edit name="family" mode="assign">
+            <string>JetBrains Mono Nerd Font</string>
+        </edit>
+        <edit name="weight" mode="assign">
+            <double>400</double>
+        </edit>
+        <edit name="slant" mode="assign">
+            <double>0</double>
+        </edit>
+        <edit name="width" mode="assign">
+            <double>100</double>
+        </edit>
+        <edit name="hinting" mode="assign">
+            <bool>true</bool> <!-- Corrected from string to bool -->
+        </edit>
+        <edit name="antialias" mode="assign">
+            <bool>true</bool>
+        </edit>
+    </match>
+</fontconfig>
+'
 
-For system-wide configuration (requires root privileges):
+# Create the fonts.conf files for each font
+echo "$INTER_FONT_CONFIG" > "$FONTCONFIG_DIR/00-inter-variable-fonts.conf"
+echo "$UBUNTU_NERD_FONT_CONFIG" > "$FONTCONFIG_DIR/01-ubuntu-nerd-fonts.conf"
+echo "$JETBRAINS_NERD_FONT_CONFIG" > "$FONTCONFIG_DIR/02-jetbrains-nerd-fonts.conf"
 
-sudo ./setup-fonts.sh
+# Confirm installation
+echo "Font configurations for Inter Variable, Ubuntu Nerd Font, and JetBrains Nerd Font have been set up successfully!"
 
-The script will:
+# Optional: Reload fontconfig to apply changes
+echo "Reloading fontconfig..."
+fc-cache -f -v
 
-    Install font configuration files for the specified fonts.
+# Done
+echo "Font configuration setup complete!"
 
-    Place the configuration files in the appropriate directory (~/.config/fontconfig/conf.d/ for user, or /etc/fonts/conf.d/ for system-wide).
+##################################################################################################################
 
-    Reload the font cache using fc-cache to apply changes.
+Next Steps:
 
-How It Works
+Copy this script into your setup-fonts.sh file.
 
-    The script creates fonts.conf files for Inter Variable, Ubuntu Nerd Font, and JetBrains Nerd Font with settings for weight, slant, hinting, and anti-aliasing.
+Run the script: ./setup-fonts.sh
 
-    It checks if the script is run with root privileges and installs the font configurations either system-wide or locally.
+Rebuild the font cache (if needed): fc-cache -fv
 
-Requirements
+Your Done.
 
-    fontconfig (installed by default on most distros).
-
-    Basic shell environment (bash).
-
-Troubleshooting
-
-If the fonts are not being applied:
-
-    Run fc-cache -f -v manually to force a font cache rebuild.
-
-    Make sure the fonts are installed on your system. If not, download them using the links above.
-
-Contributing
-
-Feel free to fork the repository, open issues, or submit pull requests. If you find any bugs or need additional font support, please open an issue!
-License
-
-This project is licensed under the MIT License.
