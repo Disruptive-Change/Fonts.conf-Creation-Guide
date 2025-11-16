@@ -20,7 +20,7 @@ A universal font configuration setup for **all Linux distributions**. This scrip
 ### **1. Clone the repository:**
 
 ```bash
-git clone https://github.com/<your-username>/universal-font-config.git
+git clone https://github.com/Disruptive-Change/universal-font-config.git
 cd universal-font-config
 
 2. Make the script executable:
